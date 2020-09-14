@@ -1,0 +1,123 @@
+C51 COMPILER V9.00   1602                                                                  09/14/2020 14:07:40 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE 1602
+OBJECT MODULE PLACED IN .\Objects\1602.obj
+COMPILER INVOKED BY: D:\Program Files (x86)\Keil\C51\BIN\C51.EXE 1602.c OPTIMIZE(1,SPEED) BROWSE DEBUG OBJECTEXTEND PRIN
+                    -T(.\Listings\1602.lst) OBJECT(.\Objects\1602.obj)
+
+line level    source
+
+*** WARNING C500 IN LINE 1 OF 1602.C: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+
+   1          #include "1602.h"
+   2          
+   3          unsigned char Test_Busy(void);  //读写检测，检测液晶是否空闲，空闲才能写命令或者数
+             -据。
+   4          /**
+   5           * @method Test_Busy
+   6           * @return {unsigned char} 忙为1，空闲为0
+   7           */
+   8          unsigned char Test_Busy(void)
+   9          {
+  10   1              unsigned char Busy,times = 0;
+  11   1              LCD_Bus = 0xff;  //1111 1111
+  12   1              do{
+  13   2                      busy_led1 = 0;
+  14   2                      RS = 0;
+  15   2                      RW = 1;
+  16   2                      EN = 1;
+  17   2                      _nop_();
+  18   2                      Busy = LCD_Bus&0x80; //按位与1000 0000 状态字SAT7为1禁止 为0允许
+  19   2                      EN = 0;
+  20   2                      times++;
+  21   2              }while(Busy&&(times <= 10));
+  22   1              busy_led1 = 1;
+  23   1              return Busy;     //用完就拉低使能端，释放总线
+  24   1      }
+  25          /****************************************/
+  26          void Lcd_WriteData(unsigned char Data)
+  27          {
+  28   1              while(Test_Busy());
+  29   1      
+  30   1              RS = 1;
+  31   1              RW = 0;
+  32   1              EN = 0;   //拉低使能端准备产生使能高脉冲信号
+  33   1              _nop_();
+  34   1              _nop_();
+  35   1              LCD_Bus = Data;
+  36   1              EN = 1;   //产生高脉冲使能信号
+  37   1              _nop_();
+  38   1              _nop_();
+  39   1              EN = 0;
+  40   1              _nop_();
+  41   1      
+  42   1      }
+  43          /****************************************/
+  44          void Lcd_WriteCmd(unsigned char Cmd)
+  45          {
+  46   1              while(Test_Busy());
+  47   1      
+  48   1              RS = 0;
+  49   1              RW = 0;
+  50   1              EN = 0; 
+  51   1              _nop_();
+  52   1              _nop_();
+C51 COMPILER V9.00   1602                                                                  09/14/2020 14:07:40 PAGE 2   
+
+  53   1              LCD_Bus = Cmd;
+  54   1              EN = 1;   //产生高脉冲使能信号
+  55   1              _nop_();
+  56   1              _nop_();
+  57   1              EN = 0;
+  58   1              _nop_();
+  59   1      
+  60   1      }
+  61          /****************************************/
+  62          void Lcd_Init(void)
+  63          {
+  64   1              Lcd_WriteCmd(0x38);//初始化
+  65   1              Lcd_WriteCmd(0x38);//初始化
+  66   1              Lcd_WriteCmd(0x38);//初始化
+  67   1              
+  68   1              _nop_();_nop_();_nop_();_nop_();_nop_();_nop_();
+  69   1              
+  70   1              Lcd_WriteCmd(0x38);//设置16*2显示，5*7点阵，8位数据接口
+  71   1        
+  72   1              Lcd_WriteCmd(0x0c);//1100 开显示 (无光标不闪烁)
+  73   1              //0x0f 1111 开显示 显示光标闪烁
+  74   1        
+  75   1              
+  76   1              Lcd_WriteCmd(0x06);//0110 设定输入方式 指针光标加一右移 整屏不移动
+  77   1              //      0x04(0100)指针光标减1左移 整屏不移动
+  78   1              //      0x07(0111) 整屏左移
+  79   1              //      0x05(0101) 整屏右移
+  80   1              
+  81   1              Lcd_WriteCmd(0x01);//显示清屏(数据指针清零显示清零)
+  82   1              //0x02 显示回车 数据指针清零
+  83   1              
+  84   1      
+  85   1      }
+  86          /****************************************/
+  87          void Lcd_WriteStr(unsigned char *Str)
+  88          {       
+  89   1              while(*Str != '\0')
+  90   1              {
+  91   2                      Lcd_WriteData(*Str);
+  92   2                      Str++;
+  93   2              }
+  94   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    183    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      7    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

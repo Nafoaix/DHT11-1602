@@ -1,0 +1,279 @@
+C51 COMPILER V9.00   MAIN                                                                  09/14/2020 14:07:40 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\MAIN.obj
+COMPILER INVOKED BY: D:\Program Files (x86)\Keil\C51\BIN\C51.EXE MAIN.c OPTIMIZE(1,SPEED) BROWSE DEBUG OBJECTEXTEND PRIN
+                    -T(.\Listings\MAIN.lst) OBJECT(.\Objects\MAIN.obj)
+
+line level    source
+
+*** WARNING C500 IN LINE 1 OF MAIN.C: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+
+   1          #include <reg51.h>
+   2          #include <intrins.h>
+   3          #include "1602.h"
+   4          #include "DHT11.h"
+   5          #define uchar unsigned char
+   6          #define uint unsigned int
+   7          /*------------按键引脚---------------*/
+   8          sbit ok_SW1 = P3^5; //确定-SW1
+   9          sbit add_SW2 = P3^4;//增加-SW2
+  10          sbit sub_SW3 = P3^3;//减少-SW3
+  11          sbit sw_SW4 = P3^2; //选择-SW4
+  12          /*------------蜂鸣器引脚---------------*/
+  13          sbit bell = P3^6;
+  14          /*------------变量声明---------------*/
+  15          uchar HTemp,LTemp,HRH,LRH,set;
+  16          /*------------函数声明---------------*/
+  17          unsigned char Key_Scan(); 
+  18          void Init_Alarm_Timer0();
+  19          
+  20          int main ()
+  21          {       
+  22   1              uchar i;                                //rec_dat[]数组显示用
+  23   1              DHT11_delay_ms(1500);   //DHT11上电后要等待1S以越过不稳定状态在此期间不能发送任何
+             -指令
+  24   1              DHT11_rec_40();
+  25   1              Lcd_Init();                             //Lcd初始化
+  26   1              HTemp=30,LTemp=20;HRH=75,LRH=35;set=2;
+  27   1              Init_Alarm_Timer0();
+  28   1              while(1)
+  29   1              {       
+  30   2                      switch(set)
+  31   2                      {
+  32   3                              case 1:
+  33   3                                      DHT11_delay_ms(2000);
+  34   3                                      DHT11_rec_40();
+  35   3                                      Lcd_WriteCmd(0x80);
+  36   3                                      Lcd_WriteStr("Press S1 to set ");
+  37   3                                      Lcd_WriteCmd(0x80 + 0x40);//设置数据指针到第二行首
+  38   3                                      for(i=0;i<16;i++){Lcd_WriteData(rec_dat[i]);}   //显示数据 
+  39   3                                      if(Key_Scan() == 1) {set = 2;}                          
+  40   3                              break;
+  41   3                              case 2:
+  42   3                                      Lcd_WriteCmd(0x80);
+  43   3                                      Lcd_WriteStr("Set the max RH  ");
+  44   3                                      Lcd_WriteCmd(0x80 + 0x40);
+  45   3                                      Lcd_WriteStr("Maximum RH: ");
+  46   3                                      Lcd_WriteData('0'+(HRH/10));
+  47   3                                      Lcd_WriteData('0'+(HRH%10));
+  48   3                                      Lcd_WriteStr("%  ");
+  49   3                                      switch(Key_Scan())
+  50   3                                      {
+  51   4                                              case 1:
+  52   4                                                      set = 3;
+C51 COMPILER V9.00   MAIN                                                                  09/14/2020 14:07:40 PAGE 2   
+
+  53   4                                              break;
+  54   4                                              case 2:
+  55   4                                                      HRH+=1;
+  56   4                                              break;
+  57   4                                              case 3:
+  58   4                                                      HRH-=1;
+  59   4                                              break;
+  60   4                                      }
+  61   3                              break;
+  62   3                              case 3:
+  63   3                                      Lcd_WriteCmd(0x80);
+  64   3                                      Lcd_WriteStr("Set the min RH  ");
+  65   3                                      Lcd_WriteCmd(0x80 + 0x40);                      
+  66   3                                      Lcd_WriteStr("Minimum RH: ");
+  67   3                                      Lcd_WriteData('0'+(LRH/10));
+  68   3                                      Lcd_WriteData('0'+(LRH%10));
+  69   3                                      Lcd_WriteStr("%  ");
+  70   3                                      switch(Key_Scan())
+  71   3                                              {
+  72   4                                              case 1:
+  73   4                                                      set = 4;
+  74   4                                              break;
+  75   4                                              case 2:
+  76   4                                                      LRH+=1;
+  77   4                                              break;
+  78   4                                              case 3:
+  79   4                                                      LRH-=1;
+  80   4                                              break;
+  81   4                                      }                       
+  82   3                              break;  
+  83   3                              case 4:
+  84   3                                      Lcd_WriteCmd(0x80);
+  85   3                                      Lcd_WriteStr("Set the max Temp ");
+  86   3                                      Lcd_WriteCmd(0x80 + 0x40);
+  87   3                                      Lcd_WriteStr("Max Temp:  ");
+  88   3                                      Lcd_WriteData('0'+(HTemp/10));
+  89   3                                      Lcd_WriteData('0'+(HTemp%10));
+  90   3                                      Lcd_WriteData('0'+175); 
+  91   3                                      Lcd_WriteStr("C   ");
+  92   3                                      switch(Key_Scan())
+  93   3                                              {
+  94   4                                              case 1:
+  95   4                                                      set = 5;
+  96   4                                              break;
+  97   4                                              case 2:
+  98   4                                                      HTemp+=1;
+  99   4                                              break;
+ 100   4                                              case 3:
+ 101   4                                                      HTemp-=1;
+ 102   4                                              break;
+ 103   4                                      }                       
+ 104   3                              break;  
+ 105   3                              case 5:
+ 106   3                                      Lcd_WriteCmd(0x80);
+ 107   3                                      Lcd_WriteStr("Set the min Temp ");
+ 108   3                                      Lcd_WriteCmd(0x80 + 0x40);                      
+ 109   3                                      Lcd_WriteStr("Min Temp:  ");
+ 110   3                                      Lcd_WriteData('0'+(LTemp/10));
+ 111   3                                      Lcd_WriteData('0'+(LTemp%10));
+ 112   3                                      Lcd_WriteData('0'+175);
+ 113   3                                      Lcd_WriteStr("C   ");
+ 114   3                                      switch(Key_Scan())
+C51 COMPILER V9.00   MAIN                                                                  09/14/2020 14:07:40 PAGE 3   
+
+ 115   3                                              {
+ 116   4                                                      case 1:
+ 117   4                                                              set = 1;
+ 118   4                                                      break;
+ 119   4                                                      case 2:
+ 120   4                                                              LTemp+=1;
+ 121   4                                                      break;
+ 122   4                                                      case 3:
+ 123   4                                                              LTemp-=1;
+ 124   4                                                      break;
+ 125   4                                              }                       
+ 126   3                              break;
+ 127   3                              case 6: 
+ 128   3                                      Lcd_WriteCmd(0x80);
+ 129   3                                      Lcd_WriteStr("Over Temp alarm ");
+ 130   3                                      //bell = ~bell;
+ 131   3                                      if(Key_Scan()) { set = 4; }                     
+ 132   3                              break;
+ 133   3                              case 7:                         
+ 134   3                                      Lcd_WriteCmd(0x80);
+ 135   3                                      Lcd_WriteStr("Over RH alarm   ");
+ 136   3                                      //bell = ~bell;
+ 137   3                                      if(Key_Scan()) { set = 2; }                     
+ 138   3                              break;                          
+ 139   3                              default :
+ 140   3                              Lcd_WriteCmd(0x80);
+ 141   3                              Lcd_WriteStr("ERROR 101       ");       
+ 142   3                              Lcd_WriteCmd(0x80 + 0x40);
+ 143   3                              Lcd_WriteStr("UNKNOW SET VALUE");
+ 144   3                              if(Key_Scan()) { set = 1; }
+ 145   3                              break;
+ 146   3                      }             
+ 147   2              }
+ 148   1              
+ 149   1              return 0;
+ 150   1      }
+ 151          
+ 152          void Init_Alarm_Timer0(void)
+ 153          {
+ 154   1              TMOD |= 0x01;     //使用工作模式1，16位定时器，使用"|"或等符号可以在使用多个定时
+             -器时不受影响                 
+ 155   1              TH0 = (65535-46082) / 256;      //给定初值50ms
+ 156   1              TL0 = (65535-46082) % 256;
+ 157   1              EA=1;             //打开总中断
+ 158   1              ET0=1;            //定时器中断打开 T0的溢出中断允许位
+ 159   1              TR0 = 1;                  //打开定时器开关
+ 160   1      }
+ 161          
+ 162          void Timer0_Alarm(void) interrupt 1
+ 163          {       
+ 164   1              TH0 = (65535-46082) / 256;      //重设初值
+ 165   1              TL0 = (65535-46082) % 256;
+ 166   1                      if(set == 1)
+ 167   1                      {
+ 168   2                              if(TH<LTemp||TH>HTemp)
+ 169   2                              {
+ 170   3                                      set = 6;
+ 171   3                              }else if(RH<LRH||RH>HRH)
+ 172   2                              {
+ 173   3                                      set = 7;                                        
+ 174   3                              }
+ 175   2                      }
+C51 COMPILER V9.00   MAIN                                                                  09/14/2020 14:07:40 PAGE 4   
+
+ 176   1      }
+ 177          
+ 178          unsigned char Key_Scan()
+ 179          {
+ 180   1          unsigned char keyValue = 0 , i; //保存键值
+ 181   1          //--检测按键SW1--//
+ 182   1          if (ok_SW1 != 1)//检测按键'确定-SW1'是否按下 按键被按下VCC上拉电阻接地，输入�
+             -�线路电压0V
+ 183   1          {
+ 184   2                  DHT11_delay_ms(10);//消除抖动
+ 185   2              if (ok_SW1 != 1)//再次检测按键是否按下
+ 186   2              {
+ 187   3                  keyValue = 1;
+ 188   3                  i = 0;
+ 189   3                  while ((i<50) && (ok_SW1 != 1)) //检测按键是否松开
+ 190   3                  {
+ 191   4                      DHT11_delay_ms(10);
+ 192   4                      i++;
+ 193   4                  }
+ 194   3              }
+ 195   2          }
+ 196   1          //--检测按键SW2--//
+ 197   1          if (add_SW2 != 1)//检测'增加-SW2'是否按下
+ 198   1          {
+ 199   2              DHT11_delay_ms(10);//消除抖动
+ 200   2              if (add_SW2!= 1)//再次检测按键是否按下
+ 201   2              {
+ 202   3                  keyValue = 2;
+ 203   3                  i = 0;
+ 204   3                  while ((i<50) && (add_SW2 != 1)) //检测按键是否松开
+ 205   3                  {
+ 206   4                      DHT11_delay_ms(10);
+ 207   4                      i++;
+ 208   4                  }
+ 209   3              }
+ 210   2          }
+ 211   1          //--检测按键SW3--//
+ 212   1          if (sub_SW3 != 1)//检测'减少-SW3'是否按下
+ 213   1          {
+ 214   2              DHT11_delay_ms(10);//消除抖动
+ 215   2              if (sub_SW3 != 1)//再次检测按键是否按下
+ 216   2              {
+ 217   3                  keyValue = 3;
+ 218   3                  i = 0;
+ 219   3                  while ((i<50) && (sub_SW3 != 1)) //检测按键是否松开
+ 220   3                  {
+ 221   4                      DHT11_delay_ms(10);
+ 222   4                      i++;
+ 223   4                  }
+ 224   3              }
+ 225   2          }
+ 226   1               //--检测按键SW4--//
+ 227   1          if (sw_SW4 != 1)//检测'选择-SW4'是否按下
+ 228   1          {
+ 229   2              DHT11_delay_ms(10);//消除抖动
+ 230   2              if (sw_SW4!= 1)//再次检测按键是否按下
+ 231   2              {
+ 232   3                  keyValue = 4;
+ 233   3                  i = 0;
+ 234   3                  while ((i<50) && (sw_SW4 != 1)) //检测按键是否松开
+ 235   3                  {
+ 236   4                      DHT11_delay_ms(10);
+C51 COMPILER V9.00   MAIN                                                                  09/14/2020 14:07:40 PAGE 5   
+
+ 237   4                      i++;
+ 238   4                  }
+ 239   3              }
+ 240   2          }
+ 241   1          return keyValue;   //将读取到键值的值返回
+ 242   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    900    ----
+   CONSTANT SIZE    =    214    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

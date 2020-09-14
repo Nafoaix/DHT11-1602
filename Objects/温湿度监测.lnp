@@ -1,0 +1,5 @@
+".\Objects\MAIN.obj",
+".\Objects\1602.obj",
+".\Objects\DHT11.obj" 
+TO ".\Objects\ÎÂÊª¶È¼à²â" 
+PRINT(".\Listings\ÎÂÊª¶È¼à²â.m51") RAMSIZE(256) 
