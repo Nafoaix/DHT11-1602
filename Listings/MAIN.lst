@@ -1,9 +1,9 @@
-C51 COMPILER V9.00   MAIN                                                                  09/14/2020 14:07:40 PAGE 1   
+C51 COMPILER V9.00   MAIN                                                                  09/25/2020 10:23:45 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN .\Objects\MAIN.obj
-COMPILER INVOKED BY: D:\Program Files (x86)\Keil\C51\BIN\C51.EXE MAIN.c OPTIMIZE(1,SPEED) BROWSE DEBUG OBJECTEXTEND PRIN
+COMPILER INVOKED BY: D:\Program Files (x86)\Keil\C51\BIN\C51.EXE MAIN.c OPTIMIZE(0,SPEED) BROWSE DEBUG OBJECTEXTEND PRIN
                     -T(.\Listings\MAIN.lst) OBJECT(.\Objects\MAIN.obj)
 
 line level    source
@@ -36,20 +36,20 @@ line level    source
              -指令
   24   1              DHT11_rec_40();
   25   1              Lcd_Init();                             //Lcd初始化
-  26   1              HTemp=30,LTemp=20;HRH=75,LRH=35;set=2;
+  26   1              HTemp=35,LTemp=15;HRH=80,LRH=20;set=2;
   27   1              Init_Alarm_Timer0();
   28   1              while(1)
   29   1              {       
   30   2                      switch(set)
   31   2                      {
   32   3                              case 1:
-  33   3                                      DHT11_delay_ms(2000);
-  34   3                                      DHT11_rec_40();
-  35   3                                      Lcd_WriteCmd(0x80);
-  36   3                                      Lcd_WriteStr("Press S1 to set ");
-  37   3                                      Lcd_WriteCmd(0x80 + 0x40);//设置数据指针到第二行首
-  38   3                                      for(i=0;i<16;i++){Lcd_WriteData(rec_dat[i]);}   //显示数据 
-  39   3                                      if(Key_Scan() == 1) {set = 2;}                          
+  33   3                                      Lcd_WriteCmd(0x80);
+  34   3                                      Lcd_WriteStr("Press S1 to set ");
+  35   3                                      Lcd_WriteCmd(0x80 + 0x40);//设置数据指针到第二行首
+  36   3                                      for(i=0;i<16;i++){Lcd_WriteData(rec_dat[i]);}   //显示数据 
+  37   3                                      if(Key_Scan() == 1) {set = 2;}
+  38   3                      DHT11_delay_ms(2500);
+  39   3                                      DHT11_rec_40();
   40   3                              break;
   41   3                              case 2:
   42   3                                      Lcd_WriteCmd(0x80);
@@ -63,7 +63,7 @@ line level    source
   50   3                                      {
   51   4                                              case 1:
   52   4                                                      set = 3;
-C51 COMPILER V9.00   MAIN                                                                  09/14/2020 14:07:40 PAGE 2   
+C51 COMPILER V9.00   MAIN                                                                  09/25/2020 10:23:45 PAGE 2   
 
   53   4                                              break;
   54   4                                              case 2:
@@ -127,7 +127,7 @@ line level    source
  112   3                                      Lcd_WriteData('0'+175);
  113   3                                      Lcd_WriteStr("C   ");
  114   3                                      switch(Key_Scan())
-C51 COMPILER V9.00   MAIN                                                                  09/14/2020 14:07:40 PAGE 3   
+C51 COMPILER V9.00   MAIN                                                                  09/25/2020 10:23:45 PAGE 3   
 
  115   3                                              {
  116   4                                                      case 1:
@@ -191,7 +191,7 @@ line level    source
  173   3                                      set = 7;                                        
  174   3                              }
  175   2                      }
-C51 COMPILER V9.00   MAIN                                                                  09/14/2020 14:07:40 PAGE 4   
+C51 COMPILER V9.00   MAIN                                                                  09/25/2020 10:23:45 PAGE 4   
 
  176   1      }
  177          
@@ -255,7 +255,7 @@ line level    source
  234   3                  while ((i<50) && (sw_SW4 != 1)) //检测按键是否松开
  235   3                  {
  236   4                      DHT11_delay_ms(10);
-C51 COMPILER V9.00   MAIN                                                                  09/14/2020 14:07:40 PAGE 5   
+C51 COMPILER V9.00   MAIN                                                                  09/25/2020 10:23:45 PAGE 5   
 
  237   4                      i++;
  238   4                  }
@@ -266,7 +266,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    900    ----
+   CODE SIZE        =    905    ----
    CONSTANT SIZE    =    214    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

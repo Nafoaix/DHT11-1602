@@ -23,20 +23,20 @@ int main ()
 	DHT11_delay_ms(1500);   //DHT11上电后要等待1S以越过不稳定状态在此期间不能发送任何指令
 	DHT11_rec_40();
 	Lcd_Init();				//Lcd初始化
-	HTemp=30,LTemp=20;HRH=75,LRH=35;set=2;
+	HTemp=35,LTemp=15;HRH=80,LRH=20;set=2;
 	Init_Alarm_Timer0();
 	while(1)
 	{	
 		switch(set)
 		{
 			case 1:
-				DHT11_delay_ms(2000);
-				DHT11_rec_40();
 				Lcd_WriteCmd(0x80);
 				Lcd_WriteStr("Press S1 to set ");
 				Lcd_WriteCmd(0x80 + 0x40);//设置数据指针到第二行首
 				for(i=0;i<16;i++){Lcd_WriteData(rec_dat[i]);}   //显示数据 
-				if(Key_Scan() == 1) {set = 2;}				
+				if(Key_Scan() == 1) {set = 2;}
+                DHT11_delay_ms(2500);
+				DHT11_rec_40();
 			break;
 			case 2:
 				Lcd_WriteCmd(0x80);

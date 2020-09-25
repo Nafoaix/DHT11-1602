@@ -18,7 +18,7 @@ unsigned char Test_Busy(void)
 		Busy = LCD_Bus&0x80; //按位与1000 0000 状态字SAT7为1禁止 为0允许
 		EN = 0;
 		times++;
-	}while(Busy&&(times <= 10));
+	}while(Busy&&(times <= 50));
 	busy_led1 = 1;
 	return Busy;     //用完就拉低使能端，释放总线
 }

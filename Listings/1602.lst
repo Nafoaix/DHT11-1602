@@ -1,9 +1,9 @@
-C51 COMPILER V9.00   1602                                                                  09/14/2020 14:07:40 PAGE 1   
+C51 COMPILER V9.00   1602                                                                  09/25/2020 10:23:45 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE 1602
 OBJECT MODULE PLACED IN .\Objects\1602.obj
-COMPILER INVOKED BY: D:\Program Files (x86)\Keil\C51\BIN\C51.EXE 1602.c OPTIMIZE(1,SPEED) BROWSE DEBUG OBJECTEXTEND PRIN
+COMPILER INVOKED BY: D:\Program Files (x86)\Keil\C51\BIN\C51.EXE 1602.c OPTIMIZE(0,SPEED) BROWSE DEBUG OBJECTEXTEND PRIN
                     -T(.\Listings\1602.lst) OBJECT(.\Objects\1602.obj)
 
 line level    source
@@ -31,7 +31,7 @@ line level    source
   18   2                      Busy = LCD_Bus&0x80; //按位与1000 0000 状态字SAT7为1禁止 为0允许
   19   2                      EN = 0;
   20   2                      times++;
-  21   2              }while(Busy&&(times <= 10));
+  21   2              }while(Busy&&(times <= 50));
   22   1              busy_led1 = 1;
   23   1              return Busy;     //用完就拉低使能端，释放总线
   24   1      }
@@ -63,7 +63,7 @@ line level    source
   50   1              EN = 0; 
   51   1              _nop_();
   52   1              _nop_();
-C51 COMPILER V9.00   1602                                                                  09/14/2020 14:07:40 PAGE 2   
+C51 COMPILER V9.00   1602                                                                  09/25/2020 10:23:45 PAGE 2   
 
   53   1              LCD_Bus = Cmd;
   54   1              EN = 1;   //产生高脉冲使能信号

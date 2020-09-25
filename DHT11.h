@@ -4,7 +4,7 @@
 #include <reg51.h>
 #include <intrins.h>
 
-sbit DHT11_Data=P0^4;   //dht11数据端口
+sbit DHT11_Data = P0^4;   //dht11数据端口
 
 sbit NOresponse_led2 = P1^1;
 sbit start_led3 = P1^2;
@@ -12,7 +12,7 @@ sbit ERRORREVISE_LED4 = P1^3;
 sbit test_led5 = P1^4;
 sbit ASK_LED6 = P1^5;
 sbit rec_byte_led7 = P1^6;
-sbit rec_40_led8= P1^7;
+sbit rec_40_led8 = P1^7;
 
 
 

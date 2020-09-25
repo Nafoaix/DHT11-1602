@@ -8,7 +8,7 @@ sbit RS = P0^7;	// LCD数据/命令选择端
 sbit RW = P0^6;	// LCD读写选择端
 sbit EN = P0^5;	// LCD使能端，高脉冲有效
 
-sbit busy_led1 = P1^0;
+sbit busy_led1 = P1^0; //LCD忙指示灯
 
 extern void Lcd_Init(void);                    //1602初始化函数
 extern void Lcd_WriteData(unsigned char Data); //写数据
